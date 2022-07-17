@@ -1,4 +1,4 @@
-@ECHO on
+@ECHO OFF
 title 明日方舟剧情文件编写器 ver. A0.1
 rem 初始化
 
@@ -18,7 +18,7 @@ choice /C 12345
 cls
 if %errorlevel%==1 goto write
 if %errorlevel%==2 goto write
-if %errorlevel%==3 (notepad.exe setting.bat)
+if %errorlevel%==3 notepad.exe setting.bat
 if %errorlevel%==4 goto write
 if %errorlevel%==5 exit
 :write
@@ -33,31 +33,55 @@ if %errorlevel%==1 (echo ^[HEADER^(key=^"title_test^", is_skippable=true, fit_mo
 if %errorlevel%==2 (echo ^[HEADER^(key=^"title_test^", is_skippable=false, fit_mode=^"BLACK_MASK^"^)^]>>%story%.txt)
 echo [stopmusic]>>%story%.txt
 echo 文件初始化完毕
+echo.
+timeout /t 1>nul
 :enr
+cls
+echo 当前文件名[%story%]
 echo 1-音乐设定
 echo 2-背景设定
 echo 3-角色定义
 echo 4-发言
 
 choice /C 123456789
-if %errorlevel%==1 (
-	echo 1-返回
-	echo 2-开启音乐
-	echo 3-关闭音乐
-	echo 4-应用预设（未启用）
-	choice /C 1234
-	if %errorlevel%==1 (
-		goto enr)
-	if %errorlevel%==2 (
-	
-	if %errorlevel%==3 
-	if %errorlevel%==4 
-)
+cls
+if %errorlevel%==1 goto voi
 if %errorlevel%==2 goto write
 if %errorlevel%==3 (notepad.exe setting.bat)
 if %errorlevel%==4 goto write
 if %errorlevel%==5 exit
 
+:voi
+rem 音乐设定主菜单
+echo 当前菜单：音乐设定
+echo 1-返回
+echo 2-开启音乐Music
+echo 3-关闭音乐
+echo 4-播放声音Sound
+echo 5-应用预设-未启用
+choice /C 1234
+if %errorlevel%==1 goto enr
+if %errorlevel%==2 goto musa
+if %errorlevel%==3 goto muss
+if %errorlevel%==4 
+if %errorlevel%==5 
+
+:musa
+rem 添加音乐播放
+set /p int=[intro前奏]
+set /p key=[key音调]
+set /p vol=[volume音量]
+echo ^[playMusic(intro=^"^$%int%^", key=^"^$%key%^", volume=%vol%)^]>>%story%.txt
+cls
+echo 已添加^[playMusic(intro=^"^$%int%^", key=^"^$%key%^", volume=%vol%)^]
+goto voi
+
+:muss
+rem 关闭音乐
+echo [stopmusic]>>%story%.txt
+cls
+echo 已添加[stopmusic]
+goto voi
 
 if %errorlevel%==1 
 if %errorlevel%==2 
