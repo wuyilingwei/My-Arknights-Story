@@ -39,7 +39,9 @@ echo [stopmusic]>>%story%.txt
 echo 文件初始化完毕
 echo.
 timeout /t 1>nul
+
 :enr
+rem 编辑主菜单
 cls
 echo 当前文件名[%story%]
 echo 1-音乐设定
@@ -47,7 +49,6 @@ echo 2-背景设定
 echo 3-角色定义
 echo 4-发言
 echo 5-动作
-
 choice /C 12345
 cls
 if %errorlevel%==1 goto voi
@@ -102,25 +103,79 @@ rem 预设音乐组（未开发）
 echo 功能暂未开发
 goto voi
 
+:bac
+rem 背景设定主菜单
+echo 当前菜单：背景设定
+echo 1-返回
+echo 2-设定背景
+echo 3-设置黑屏
+choice /C 123
+if %errorlevel%==1 goto enr
+if %errorlevel%==2 goto bacp
+if %errorlevel%==3 goto bacb
+
+:bacp
+rem 设定背景
+set /p pna=[背景图片名称]
+set /p tim=[渐进式进入时间]
+echo ^[Background^(image="%pna%", width=1, height=1, fadetime=%tim%^)^]>>%story%.txt
+cls
+echo 已添加^[Background^(image="%pna%", width=1, height=1, fadetime=%tim%^)^]
+goto bacb
+
+:bacb
+rem 添加黑屏
+set /p tim=[黑屏时间设定]
+echo ^[Blocker^(a=1, initr=2,fadetime=%tim%, block=true^)^]>>%story%.txt
+cls
+echo 已添加^[Blocker^(a=1, initr=2,fadetime=%tim%, block=true^)^]
+goto bacb
 
 :chr
 rem 角色设定主菜单
 echo 当前菜单：角色设定
 echo 1-返回
-echo 2-设定场上角色（1）
-echo 3-关闭音乐
-echo 4-播放声音Sound
-echo 5-应用预设-未启用
+echo 2-清空角色
+echo 3-设定场上角色（1）
+echo 4-设定场上角色（2）
+echo 5-设置插入对话（未启用）
 choice /C 1234
-
 if %errorlevel%==1 goto enr
-if %errorlevel%==2 goto musa
-if %errorlevel%==3 goto muss
-if %errorlevel%==4 goto soua
-if %errorlevel%==5 goto voip
+if %errorlevel%==2 goto chrc
+if %errorlevel%==3 goto chrs
+if %errorlevel%==4 goto chrd
+if %errorlevel%==5 goto chre
+
+:chrc
+rem 添加空角色
+echo ^[Character^]>>%story%.txt
+set chan=0
+cls
+echo 已添加^[Character^]
+goto chr
+
+:chrs
+rem 添加单角色
+set /p cha1=[角色1]
+echo ^[Character^(name="%cha1%"^)^]>>%story%.txt
+set chan=1
+cls
+echo 已添加^[Character^(name="%cha1%"^)^]
+goto chr
+
+:chrd
+rem 添加双角色
+set /p cha1=[角色1]
+set /p cha2=[角色2]
+echo ^[Character^(name="%cha1%",name2="%cha2%"^)^]>>%story%.txt
+set chan=2
+cls
+echo 已添加^[Character^(name="%cha1%", name2="%cha2%"^)^]
+goto chr
 
 
-
+:chre
+rem 插入通讯的页面，先放放
 
 
 if %errorlevel%==1 
