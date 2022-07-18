@@ -1,5 +1,5 @@
 @ECHO OFF
-title 明日方舟剧情文件编写器 ver. A0.2
+title 明日方舟剧情文件编写器 ver. B1.0
 rem 初始化
 mkdir Storylibrary
 
@@ -57,6 +57,8 @@ if %errorlevel%==3 goto chr
 if %errorlevel%==4 goto wri
 if %errorlevel%==5 goto act
 
+
+
 :voi
 rem 音乐设定主菜单
 echo 当前菜单：音乐设定
@@ -103,6 +105,7 @@ rem 预设音乐组（未开发）
 echo 功能暂未开发
 goto voi
 
+
 :bac
 rem 背景设定主菜单
 echo 当前菜单：背景设定
@@ -121,7 +124,7 @@ set /p tim=[渐进式进入时间]
 echo ^[Background^(image="%pna%", width=1, height=1, fadetime=%tim%^)^]>>%story%.txt
 cls
 echo 已添加^[Background^(image="%pna%", width=1, height=1, fadetime=%tim%^)^]
-goto bacb
+goto bac
 
 :bacb
 rem 添加黑屏
@@ -129,7 +132,8 @@ set /p tim=[黑屏时间设定]
 echo ^[Blocker^(a=1, initr=2,fadetime=%tim%, block=true^)^]>>%story%.txt
 cls
 echo 已添加^[Blocker^(a=1, initr=2,fadetime=%tim%, block=true^)^]
-goto bacb
+goto bac
+
 
 :chr
 rem 角色设定主菜单
@@ -138,13 +142,11 @@ echo 1-返回
 echo 2-清空角色
 echo 3-设定场上角色（1）
 echo 4-设定场上角色（2）
-echo 5-设置插入对话（未启用）
 choice /C 1234
 if %errorlevel%==1 goto enr
 if %errorlevel%==2 goto chrc
 if %errorlevel%==3 goto chrs
 if %errorlevel%==4 goto chrd
-if %errorlevel%==5 goto chre
 
 :chrc
 rem 添加空角色
@@ -167,6 +169,7 @@ goto chr
 rem 添加双角色
 set /p cha1=[角色1]
 set /p cha2=[角色2]
+set foc=0
 echo ^[Character^(name="%cha1%",name2="%cha2%"^)^]>>%story%.txt
 set chan=2
 cls
@@ -174,12 +177,49 @@ echo 已添加^[Character^(name="%cha1%", name2="%cha2%"^)^]
 goto chr
 
 
-:chre
-rem 插入通讯的页面，先放放
+:wri
+rem 对话主菜单
+echo 当前菜单：对话设定
+echo 1-返回
+echo 2-设置焦点角色
+echo 3-设置发言
+echo 4-设置插入对话（未启用）
+choice /C 123
+if %errorlevel%==1 goto enr
+if %errorlevel%==2 goto wrif
+if %errorlevel%==3 goto wris
+if %errorlevel%==4 goto wrie
 
+:wrif
+rem 设置场上焦点角色
+if not %chan%==2 goto wrife
+echo 当前场上左角色为[%cha1%]，右角色为[%cha2%]，焦点为%foc%。
+choice /C 12 /M 0-无焦点，1-左，2-右
+if %errorlevel%==1 (
+    echo ^[Character^(name="%cha1%",name2="%cha2%"^)^]>>%story%.txt
+    cls
+    echo 已添加^[Character^(name="%cha1%", name2="%cha2%"^)^]
+    goto wri
+)
+echo ^[Character^(name="%cha1%",name2="%cha2%"^)^]>>%story%.txt
+cls
+echo 已添加^[Character^(name="%cha1%", name2="%cha2%", focus=%errorlevel%^)^]
+goto wri
+:wrife
+rem 错误提示
+echo ERROR:当前场上并没有双角色
+echo 请先设置两个角色
+timeout /t 3>nul
+goto wri
 
-if %errorlevel%==1 
-if %errorlevel%==2 
-if %errorlevel%==3 
-if %errorlevel%==4 
-if %errorlevel%==5 
+:wris
+rem 添加说话内容
+set /p namc=[说话者名称]
+set /p nams=[说话内容]
+echo ^[name="%namc%"^]   %nams%>>%story%.txt
+cls
+echo 已添加^[name="%namc%"^]   %nams%
+goto wri
+
+:wrie
+rem 插入说话内容（未启用）
